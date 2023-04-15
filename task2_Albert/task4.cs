@@ -6,92 +6,108 @@ namespace GameOfLife
     {
         static void Main(string[] args)
         {
-            // Set the size of the playing field
-            const int rows = 20;
-            const int columns = 40;
+            // Set the size of the field
+            const int rows = 10;
+            const int cols = 10;
 
-            // Initialize the playing field with random values
-            bool[,] field = new bool[rows, columns];
+            // Initialize the field with random living cells
+            bool[,] field = new bool[rows, cols];
             Random random = new Random();
             for (int i = 0; i < rows; i++)
             {
-                for (int j = 0; j < columns; j++)
+                for (int j = 0; j < cols; j++)
                 {
-                    field[i, j] = random.NextDouble() < 0.5;
+                    field[i, j] = random.Next(2) == 1;
                 }
             }
 
-            // Loop through the generations of the game
-            int generation = 0;
-            while (true)
+            // Output the initial state of the field
+            OutputField(field);
+
+            // Loop until the game is over
+            bool gameOver = false;
+            bool[,] previousField = field;
+            while (!gameOver)
             {
-                Console.Clear();
-                Console.WriteLine($"Generation: {generation}");
+                // Wait for user input
+                Console.ReadLine();
 
-                // Output the playing field to the console
+                // Calculate the next generation of the field
+                bool[,] nextField = new bool[rows, cols];
+                bool changed = false;
                 for (int i = 0; i < rows; i++)
                 {
-                    for (int j = 0; j < columns; j++)
+                    for (int j = 0; j < cols; j++)
                     {
-                        Console.Write(field[i, j] ? "*" : " ");
-                    }
-                    Console.WriteLine();
-                }
-
-                // Copy the playing field to a new array for the next generation
-                bool[,] newField = new bool[rows, columns];
-                for (int i = 0; i < rows; i++)
-                {
-                    for (int j = 0; j < columns; j++)
-                    {
-                        int neighbors = 0;
-
-                        // Count the number of living neighbors for each cell
-                        for (int x = i - 1; x <= i + 1; x++)
+                        // Count the number of living neighbors
+                        int livingNeighbors = 0;
+                        for (int ii = -1; ii <= 1; ii++)
                         {
-                            for (int y = j - 1; y <= j + 1; y++)
+                            for (int jj = -1; jj <= 1; jj++)
                             {
-                                if (x >= 0 && x < rows && y >= 0 && y < columns && field[x, y])
-                                {
-                                    neighbors++;
-                                }
+                                if (ii == 0 && jj == 0) continue;
+                                int ni = i + ii;
+                                int nj = j + jj;
+                                if (ni < 0 || ni >= rows || nj < 0 || nj >= cols) continue;
+                                if (previousField[ni, nj]) livingNeighbors++;
                             }
                         }
 
-                        // Apply the rules of the game to each cell
-                        if (field[i, j])
+                        // Apply the rules of the game
+                        if (previousField[i, j] && (livingNeighbors == 2 || livingNeighbors == 3))
                         {
-                            neighbors--; // Subtract the cell itself from the count of neighbors
-                            if (neighbors == 2 || neighbors == 3)
-                            {
-                                newField[i, j] = true;
-                            }
-                            else
-                            {
-                                newField[i, j] = false;
-                            }
+                            nextField[i, j] = true;
+                        }
+                        else if (!previousField[i, j] && livingNeighbors == 3)
+                        {
+                            nextField[i, j] = true;
                         }
                         else
                         {
-                            if (neighbors == 3)
-                            {
-                                newField[i, j] = true;
-                            }
-                            else
-                            {
-                                newField[i, j] = false;
-                            }
+                            nextField[i, j] = false;
+                        }
+
+                        // Check if the field has changed
+                        if (nextField[i, j] != previousField[i, j])
+                        {
+                            changed = true;
                         }
                     }
                 }
 
-                // Set the playing field to the new array for the next generation
-                field = newField;
+                // Output the new state of the field
+                OutputField(nextField);
 
-                // Wait for a short period of time before displaying the next generation
-                System.Threading.Thread.Sleep(100);
-                generation++;
+                // Check if the game is over
+                if (!changed)
+                {
+                    Console.WriteLine("Game over");
+                    gameOver = true;
+                }
+
+                // Update the previous field
+                previousField = nextField;
             }
+        }
+
+        static void OutputField(bool[,] field)
+        {
+            for (int i = 0; i < field.GetLength(0); i++)
+            {
+                for (int j = 0; j < field.GetLength(1); j++)
+                {
+                    if (field[i, j])
+                    {
+                        Console.Write("+");
+                    }
+                    else
+                    {
+                        Console.Write("-");
+                    }
+                }
+                Console.WriteLine();
+            }
+            Console.WriteLine("1 2 3 4 5 6 7 8 9");
         }
     }
 }
