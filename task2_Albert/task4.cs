@@ -54,18 +54,9 @@ namespace GameOfLife
                         }
 
                         // Apply the rules of the game
-                        if (previousField[i, j] && (livingNeighbors == 2 || livingNeighbors == 3))
-                        {
-                            nextField[i, j] = true;
-                        }
-                        else if (!previousField[i, j] && livingNeighbors == 3)
-                        {
-                            nextField[i, j] = true;
-                        }
-                        else
-                        {
-                            nextField[i, j] = false;
-                        }
+                        // Apply the rules of the game
+                        nextField[i, j] = previousField[i, j] ? livingNeighbors == 2 || livingNeighbors == 3 : livingNeighbors == 3;
+
 
                         // Check if the field has changed
                         if (nextField[i, j] != previousField[i, j])
