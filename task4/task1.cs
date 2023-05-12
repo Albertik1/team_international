@@ -1,71 +1,49 @@
-public abstract class Shape
+public abstract class Animal
 {
-    public abstract double CalculateArea();
-    public abstract double CalculatePerimeter();
+    public abstract string Species { get; }
 }
 
-public class Square : Shape
+public interface ICarnivore
 {
-    private double _side;
-
-    public Square(double side)
-    {
-        _side = side;
-    }
-
-    public override double CalculateArea()
-    {
-        return _side * _side;
-    }
-
-    public override double CalculatePerimeter()
-    {
-        return 4 * _side;
-    }
+    void Hunt();
 }
 
-public class Triangle : Shape
+public interface IHerbivore
 {
-    private double _base;
-    private double _height;
-    private double _side1;
-    private double _side2;
+    void Graze();
+}
 
-    public Triangle(double b, double h, double s1, double s2)
-    {
-        _base = b;
-        _height = h;
-        _side1 = s1;
-        _side2 = s2;
-    }
+public class Wolf : Animal, ICarnivore
+{
+    public override string Species => "Wolf";
 
-    public override double CalculateArea()
+    public void Hunt()
     {
-        return 0.5 * _base * _height;
-    }
-
-    public override double CalculatePerimeter()
-    {
-        return _base + _side1 + _side2;
+        // Implement hunting behavior
     }
 }
 
-public class Circle : Shape
+public class Rabbit : Animal, IHerbivore
 {
-    private double _radius;
+    public override string Species => "Rabbit";
 
-    public Circle(double radius)
+    public void Graze()
     {
-        _radius = radius;
+        // Implement grazing behavior
+    }
+}
+
+public class Bear : Animal, ICarnivore, IHerbivore
+{
+    public override string Species => "Bear";
+
+    public void Hunt()
+    {
+        // Implement hunting behavior
     }
 
-    public override double CalculateArea()
+    public void Graze()
     {
-        return Math.PI * _radius * _radius;
-    }
-
-    public override double CalculatePerimeter()
-    {
-        return 2 * Math.PI * _radius;
+        // Implement grazing behavior
     }
 }

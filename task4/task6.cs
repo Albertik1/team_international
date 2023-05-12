@@ -9,11 +9,13 @@ public abstract class Lightstring
         bulbs = new Bulb[numBulbs];
         for (int i = 0; i < numBulbs; i++)
         {
-            bulbs[i] = new Bulb(i);
+            bulbs[i] = CreateBulb(i);
         }
     }
 
     public abstract string GetLightState(int minute);
+
+    protected abstract Bulb CreateBulb(int serialNumber);
 
     public class Bulb
     {
@@ -68,3 +70,64 @@ public abstract class Lightstring
         }
     }
 }
+
+public class SimpleLightString : Lightstring
+{
+    public SimpleLightString(int numBulbs) : base(numBulbs) { }
+
+    protected override Bulb CreateBulb(int serialNumber)
+    {
+        return new Bulb(serialNumber);
+    }
+
+    public override string GetLightState(int minute)
+    {
+        string state = "";
+        for (int i = 0; i < bulbs.Length; i++)
+        {
+            if (bulbs[i].IsOn(minute))
+            {
+                state += "1";
+            }
+            else
+            {
+                state += "0";
+            }
+        }
+        return state;
+    }
+}
+
+public class ColoredLightString : Lightstring
+{
+    public ColoredLightString(int numBulbs) : base(numBulbs) { }
+
+    protected override Bulb CreateBulb(int serialNumber)
+    {
+        return new ColoredBulb(serialNumber);
+    }
+
+    public override string GetLightState(int minute)
+    {
+        string state = "";
+        for (int i = 0; i < bulbs.Length; i++)
+        {
+            if (bulbs[i].IsOn(minute))
+            {
+                state += bulbs[i] is ColoredBulb coloredBulb ? coloredBulb.GetColor() : "1";
+            }
+            else
+            {
+                state += "0";
+            }
+        }
+        return state;
+    }
+}
+
+// Usage example:
+var simpleLightString = new SimpleLightString(10);
+Console.WriteLine(simpleLightString.GetLightState(5));
+
+var coloredLightString = new ColoredLightString(8);
+Console.WriteLine(coloredLightString.GetLightState(3));
