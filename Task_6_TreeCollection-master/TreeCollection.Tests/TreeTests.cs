@@ -131,9 +131,9 @@ namespace TreeCollection.Tests
             tree.Add(2);
 
             // Action-Assert
-
-            Assert.Throws<Exception>(() => tree.Add(2));
+            Assert.Throws<ArgumentException>(() => tree.Add(2));
         }
+
 
         [Test]
         public void FillTree_UseItInTwoLoopsInARow_EnumeratorWasReseted()
